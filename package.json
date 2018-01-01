@@ -1,0 +1,26 @@
+{
+  "name": "basedakp48-plugin-utils",
+  "version": "1.1.0",
+  "description": "Some general utilities for use within BasedAKP48 plugins",
+  "license": "MIT",
+  "main": "index.js",
+  "repository": "BasedAKP48/plugin-utils",
+  "author": {
+    "name": "Austin Peterson",
+    "email": "austin@akpwebdesign.com",
+    "url": "https://blog.akpwebdesign.com"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "files": [
+    "index.js",
+    "lib/*"
+  ],
+  "dependencies": {
+    "firebase-admin": "^5.6.0"
+  }
+}
