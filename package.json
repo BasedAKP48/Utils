@@ -14,7 +14,8 @@
     "node": ">=8"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha"
   },
   "files": [
     "index.js",
@@ -26,6 +27,8 @@
   "devDependencies": {
     "eslint": "^4.14.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "mocha": "^4.1.0",
+    "unexpected": "^10.36.2"
   }
 }
