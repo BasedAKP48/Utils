@@ -1,4 +1,3 @@
-/* eslint-env node, mocha */
 const utils = require('../index.js');
 const expect = require('unexpected');
 
