@@ -1,6 +1,6 @@
 {
   "name": "@basedakp48/plugin-utils",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Some general utilities for use within BasedAKP48 plugins",
   "license": "MIT",
   "main": "index.js",
