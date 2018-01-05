@@ -1,16 +1,18 @@
 const ensureRequired = require('./lib/ensureRequired');
-const PresenceSystem = require('./lib/presenceSystem');
+const get = require('./lib/safeFirebaseObject');
+const getCID = require('./lib/getCID');
 const getReply = require('./lib/getReply');
 const initialize = require('./lib/initialize');
-const getCID = require('./lib/getCID');
-const get = require('./lib/safeFirebaseObject');
+const MessagingSystem = require('./lib/messagingSystem');
+const PresenceSystem = require('./lib/presenceSystem');
 
 module.exports = {
   ensureRequired,
-  PresenceSystem,
+  getCID,
   getReply,
   initialize,
-  getCID,
+  MessagingSystem,
+  PresenceSystem,
   safeObject: get.safeObject,
   safeString: get.safeString,
 };
