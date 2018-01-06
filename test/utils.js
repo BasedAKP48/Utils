@@ -1,4 +1,4 @@
-const utils = require('../index.js');
+const utils = require('../');
 const expect = require('unexpected');
 
 describe('Utils', () => {
@@ -36,6 +36,7 @@ describe('Utils', () => {
       expect(utils.safeObject(dirtyObject), 'to exhaustively satisfy', cleanedObject);
     });
   });
+
   describe('safeString', () => {
     const cleanString = '-L1voea_NjTN8H36e8px';
     const dirtyString = '@basedakp48/plugin-utils';
@@ -48,6 +49,27 @@ describe('Utils', () => {
     it('Should be a cleaned string', () => {
       expect(utils.safeString(dirtyString), 'to be', cleanedString);
     });
+  });
+
+  describe('getReply', () => {
+    it('Should have the original channel');
+    it('Should use our UID');
+    it('Should have this text');
+    it('Should copy data');
+    it('Should be directed out');
+    it('Should be an awesome reply');
+  });
+
+  describe('initialize', () => {
+    it('Should have tests written');
+  });
+
+  describe('ensureRequired', () => {
+    it('Should be copied to here');
+  });
+
+  describe('sendMessage', () => {
+    it('Should have tests written');
   });
 });
 
