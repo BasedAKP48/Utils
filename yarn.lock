@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@basedakp48/eslint-config@*":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@basedakp48/eslint-config/-/eslint-config-0.0.1.tgz#6b6abb4b497b31133f90cb45e995b933cfe9ca4b"
+  dependencies:
+    eslint-config-airbnb-base "^12.1.0"
+    eslint-plugin-import "^2.8.0"
+
 "@firebase/app-types@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@firebase/app-types/-/app-types-0.1.0.tgz#27069ba4f8d74990eae7c88ec8f3d282e5215786"
