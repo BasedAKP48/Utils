@@ -16,7 +16,7 @@ declare interface GetCIDOptions {
   /** Root directory of the plugin. */
   dir?: string
   /** CID file name. */
-  file?: string = 'cid.json'
+  file?: string
 }
 
 declare interface ModuleOptions {
@@ -38,7 +38,7 @@ declare interface ModuleOptions {
   /** An object describing the package.json file (optional). */
   pkg?: object
   /** Listen mode of the plugin module (optional). Defaults to "normal". */
-  listenMode?: string = "normal"
+  listenMode?: string
 }
 
 declare interface MessagingSystemOptions {
@@ -47,9 +47,9 @@ declare interface MessagingSystemOptions {
   /** The client ID to use. */
   cid: string
   /** The mode to listen in. */
-  listenMode: string = "normal"
+  listenMode: string
   /** Whether to delete messages after emitting. */
-  deleteAfterEmit: boolean = false
+  deleteAfterEmit: boolean
 }
 
 declare interface PresenceSystemOptions {
@@ -60,9 +60,9 @@ declare interface PresenceSystemOptions {
   /** An object describing the package.json file. */
   pkg: object
   /** The mode to listen in. */
-  listenMode: string = "normal"
+  listenMode: string
   /** The name of this instance for display to users. */
-  instanceName: string = pkg.name
+  instanceName: string
 }
 
 declare namespace Utils {
