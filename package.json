@@ -4,6 +4,7 @@
   "description": "Some general utilities for use within BasedAKP48 plugins",
   "license": "MIT",
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": "BasedAKP48/plugin-utils",
   "author": {
     "name": "Austin Peterson",
@@ -22,9 +23,11 @@
   },
   "files": [
     "index.js",
+    "index.d.ts",
     "lib/*"
   ],
   "dependencies": {
+    "@firebase/database-types": "^0.1.1",
     "firebase-admin": "^5.6.0"
   },
   "devDependencies": {
