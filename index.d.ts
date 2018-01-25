@@ -209,6 +209,9 @@ declare namespace Utils {
      * Send internal message with given data, returning a Promise that resolves with the internal message.
      */
     response(message: ResponseMessage, options?: ResponseOptions) : Promise<InternalMessage>
+    /** Attempts to send an error to the database. */
+    sendError(error: Error, timestamp?: number) : boolean
+    
     destroyed() : boolean
 
     on(event: 'config', listener: (config: object, reference: Reference) => void) : this
