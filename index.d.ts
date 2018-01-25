@@ -79,11 +79,17 @@ declare namespace Utils {
     command: string
     /** Arguments (linked to `channel`) */
     arg: string
+    /** Data to send with message. */
     data?: string | object
   }
 
   type ResponseOptions = {
-    timestamp?: number
+    /**
+     * Time to wait before rejecting the promise. 
+     * 
+     * Must be over 1000 (1 second) Default: 60000 (1 minute) 
+     */
+    timeout?: number
   }
 
   interface GetCIDOptions {
