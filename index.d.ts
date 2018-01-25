@@ -87,7 +87,7 @@ declare namespace Utils {
     /**
      * Time to wait before rejecting the promise. 
      * 
-     * Must be over 1000 (1 second) Default: 60000 (1 minute) 
+     * Must be at least 1000 (1 second). Default: 60000 (1 minute) 
      */
     timeout?: number
   }
