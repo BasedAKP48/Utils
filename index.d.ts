@@ -211,7 +211,7 @@ declare namespace Utils {
   
   /** A plugin module. Overrides options.type to "plugin" */
   class Plugin extends Module {
-    constructor(options: ModuleOptions)
+    constructor(options?: ModuleOptions)
   }
   
   /**
@@ -219,7 +219,7 @@ declare namespace Utils {
    * and sets options.listenMode to "connector" if not already set.
    */
   class Connector extends Module {
-    constructor(options: ModuleOptions)
+    constructor(options?: ModuleOptions)
   }
   
   class MessagingSystem extends EventEmitter {
