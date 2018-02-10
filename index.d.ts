@@ -294,6 +294,9 @@ declare namespace Utils {
   class PresenceSystem extends EventEmitter {
     /** Initialize the presence system. */
     initialize(options: PresenceSystemOptions)
+
+    /** Sets display name */
+    setName(name: string)
     
     /** Clear all event emitter listeners. TODO: Not yet implemented */
     clearListeners()
@@ -307,8 +310,7 @@ declare namespace Utils {
     /** Whether or not the presence system is usable. */
     valid() : boolean
 
-    on(event: 'connect', listener: () => void) : this
-    on(event: 'disconnect', listener: () => void) : this
+    on(event: 'connect' | 'disconnect', listener: () => void) : this
     on(event: 'status', listener: (status: string) => void) : this
   }
 }
