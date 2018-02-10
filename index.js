@@ -8,17 +8,19 @@ const PresenceSystem = require('./lib/presenceSystem');
 const Plugin = require('./lib/plugin/Plugin');
 const Connector = require('./lib/plugin/Connector');
 const Module = require('./lib/plugin/Module');
+const move = require('./lib/move');
 
 module.exports = {
   Plugin,
   Connector,
   Module,
+  MessagingSystem,
+  PresenceSystem,
   ensureRequired,
   getCID,
   getReply,
   initialize,
-  MessagingSystem,
-  PresenceSystem,
+  move,
   safeObject: get.safeObject,
   safeString: get.safeString,
 };

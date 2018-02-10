@@ -26,9 +26,9 @@ declare interface AKP48Message {
   /** Channel ID */
   channel: string
   /** Type of message received */
-  type: string
+  type?: string
   /** Time the message was sent */
-  timeReceived: number
+  timeReceived?: number
   /** Extra data the message contains */
   data?: string | object
   /** 
@@ -38,7 +38,7 @@ declare interface AKP48Message {
    * 
    * out: A message sent by a plugin
    */
-  direction: 'in' | 'out'
+  direction?: 'in' | 'out'
 }
 
 declare interface OutgoingMessage extends AKP48Message {
@@ -54,6 +54,16 @@ declare interface OutgoingMessage extends AKP48Message {
   type?: string
   /** Direction of the message. Set by server. */
   direction?: 'out'
+}
+
+/** A message sent from external sorces */
+declare interface IncomingMessage extends AKP48Message {
+  /** Unique identifier of sender */
+  uid: string
+  /** Connector identifier */
+  cid: string
+  timeReceived: number
+  direction: 'in'
 }
 
 declare interface InternalMessage extends AKP48Message {
@@ -199,6 +209,17 @@ declare namespace Utils {
    * @param {string} string Potentially unsafe string.
    */
   function safeString(string: string)
+
+  /**
+   * Moves data to new location, prioritizing existing data in new location if it exists.
+   * @param {admin.Reference} root
+   * @param {String} from location to copy data from
+   * @param {String} to location to copy data to
+   * @returns {Promise<boolean | 'merged'>} true if data moved to new location,
+   * 'merged' if data was merged,
+   * false if data did not exist.
+   */
+  function move(root: admin.database.Reference, from: string, to: string): Promise<boolean | 'merged'>
   
   /** A general Firebase-enabled module. */
   class Module extends EventEmitter {
