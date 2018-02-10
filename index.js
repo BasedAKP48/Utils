@@ -23,4 +23,5 @@ module.exports = {
   move,
   safeObject: get.safeObject,
   safeString: get.safeString,
+  isUnsafe: get.isUnsafe,
 };

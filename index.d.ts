@@ -211,10 +211,17 @@ declare namespace Utils {
   function safeString(string: string)
 
   /**
+   * Returns true if string is unsafe
+   * @param {string} string string to validate
+   * @param {boolean} [path] true if string is a path
+   */
+  function isUnsafe(string: string, path?: boolean): boolean
+
+  /**
    * Moves data to new location, prioritizing existing data in new location if it exists.
    * @param {admin.Reference} root
-   * @param {String} from location to copy data from
-   * @param {String} to location to copy data to
+   * @param {string} from location to copy data from
+   * @param {string} to location to copy data to
    * @returns {Promise<boolean | 'merged'>} true if data moved to new location,
    * 'merged' if data was merged,
    * false if data did not exist.
