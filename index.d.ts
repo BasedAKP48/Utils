@@ -164,6 +164,18 @@ declare namespace Utils {
     instanceName: string
   }
 
+  /** Prefix to apply to forwarded events */
+  type ForwarderPrefix = string;
+  /** Events to not forward */
+  type ForwarderExceptions = string[];
+  
+  interface ForwarderOptions {
+    /** Prefix to apply to forwarded events */
+    prefix?: ForwarderPrefix
+    /** Events to not forward */
+    except?: string | string[]
+  }
+
   /**
    * Ensures that all keys are included in an options object.
    * @param {object} options The options to check for required keys in.
@@ -171,6 +183,28 @@ declare namespace Utils {
    * @return {boolean} Whether or not the required properties exist.
    */
   function ensureRequired(options: object, required: string[]) : boolean
+
+  /**
+   * Forwards events from one emitter to another.
+   * @param from Forwarding emitter
+   * @param to Receiving emitter
+   * @param options options for forwarding events
+   */
+  function eventForwarder(from: EventEmitter, to: EventEmitter, options?: ForwarderOptions): void
+  /**
+   * Forwards events from one emitter to another.
+   * @param from Forwarding emitter
+   * @param to Receiving emitter
+   * @param prefix Prefix to apply to events
+   */
+  function eventForwarder(from: EventEmitter, to: EventEmitter, prefix?: ForwarderPrefix): void
+  /**
+   * Forwards events from one emitter to another.
+   * @param from Forwarding emitter
+   * @param to Receiving emitter
+   * @param except Events not to forward
+   */
+  function eventForwarder(from: EventEmitter, to: EventEmitter, except?: ForwarderExceptions): void
 
   /**
    * Loads or generates a CID for you.
@@ -202,13 +236,13 @@ declare namespace Utils {
    * @param {object} object Potentially unsafe object.
    * @returns {object} Original or new clean object.
    */
-  function safeObject(object: object)
+  function safeObject(object: object): object
 
   /**
    * Returns a cleaned string ready for use in Firebase.
    * @param {string} string Potentially unsafe string.
    */
-  function safeString(string: string)
+  function safeString(string: string): string
 
   /**
    * Returns true if string is unsafe

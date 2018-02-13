@@ -4,6 +4,7 @@ const MessagingSystem = require('./lib/messagingSystem');
 const Module = require('./lib/plugin/Module');
 const PresenceSystem = require('./lib/presenceSystem');
 const ensureRequired = require('./lib/ensureRequired');
+const eventForwarder = require('./lib/eventForwarder');
 const getCID = require('./lib/getCID');
 const getReply = require('./lib/getReply');
 const initialize = require('./lib/initialize');
@@ -17,6 +18,7 @@ module.exports = {
   Module,
   PresenceSystem,
   ensureRequired,
+  eventForwarder,
   getCID,
   getReply,
   initialize,

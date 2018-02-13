@@ -74,5 +74,12 @@ describe('eventForwarder', () => {
       expect(enabled).to.be.true;
       expect(disabled).to.be.false;
     });
+    it('should allow except to be a string', () => {
+      let disabled = false;
+      forward(event1, event2, { prefix: 'event-', except: 'disabled' });
+      event2.once('event-disabled', () => { disabled = true; });
+      expect(event1.emit('disabled')).to.be.false;
+      expect(disabled).to.be.false;
+    });
   });
 });
