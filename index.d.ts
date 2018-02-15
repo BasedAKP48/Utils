@@ -225,11 +225,10 @@ declare namespace Utils {
   
   /**
    * Initializes a FirebaseAdmin application.
-   * @param {admin} firebase Firebase Admin instance
    * @param {admin.ServiceAccount} serviceAccount Service account file from the Firebase web application
    * @param {string} [appname] Optional name to initialize with.
    */
-  function initialize(firebase: admin, serviceAccount: admin.ServiceAccount, appname: string)
+  function initialize(serviceAccount: admin.ServiceAccount, appname: string)
 
   /**
    * Returns a clean object (original or new) ready for storing in Firebase.
