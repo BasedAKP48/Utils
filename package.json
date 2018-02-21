@@ -19,7 +19,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "mocha"
+    "test": "mocha",
+    "release": "standard-version"
   },
   "files": [
     "index.js",
@@ -28,7 +29,8 @@
   ],
   "dependencies": {
     "@firebase/database-types": "^0.1.1",
-    "firebase-admin": "^5.8.2"
+    "firebase-admin": "^5.8.2",
+    "standard-version": "^4.3.0"
   },
   "devDependencies": {
     "@basedakp48/eslint-config": "*",
