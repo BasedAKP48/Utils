@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.15.0"></a>
+# [1.15.0](https://github.com/BasedAKP48/Utils/compare/1.14.0...1.15.0) (2018-03-24)
+
+
+### Bug Fixes
+
+* **eventForwarder:** forwarded event prefix must be a string ([e9231bf](https://github.com/BasedAKP48/Utils/commit/e9231bf))
+* **response:** EventEmitter is not Firebase ([4529cba](https://github.com/BasedAKP48/Utils/commit/4529cba))
+
+
+### Features
+
+* **build:** add standard-version for releases ([b485936](https://github.com/BasedAKP48/Utils/commit/b485936))
+
+
+
 <a name="1.14.0"></a>
 # 1.14.0 (2018-02-21)
 
