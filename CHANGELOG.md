@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.15.1"></a>
+## [1.15.1](https://github.com/BasedAKP48/Utils/compare/v1.15.0...v1.15.1) (2018-03-25)
+
+
+### Bug Fixes
+
+* **database:** Use correct args for initialize ([5480d3c](https://github.com/BasedAKP48/Utils/commit/5480d3c))
+* **response:** Remove message from queue ([4bb2960](https://github.com/BasedAKP48/Utils/commit/4bb2960))
+
+
+### Features
+
+* Add "patch" and "cleanDB" scripts ([9fe5f7f](https://github.com/BasedAKP48/Utils/commit/9fe5f7f))
+
+
+
 <a name="1.15.0"></a>
 # [1.15.0](https://github.com/BasedAKP48/Utils/compare/1.14.0...1.15.0) (2018-03-24)
 
