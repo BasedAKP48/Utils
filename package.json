@@ -20,6 +20,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha",
+    "cleanDB": "node ./database/clearMessages.js",
+    "patch": "standard-version -r patch",
     "release": "standard-version"
   },
   "files": [
@@ -28,15 +30,15 @@
     "lib/*"
   ],
   "dependencies": {
-    "@firebase/database-types": "^0.1.1",
-    "firebase-admin": "^5.8.2",
-    "standard-version": "^4.3.0"
+    "@firebase/database-types": "^0.1.2",
+    "firebase-admin": "^5.11.0"
   },
   "devDependencies": {
-    "@basedakp48/eslint-config": "*",
+    "@basedakp48/eslint-config": "^1.0.1",
     "chai": "^4.1.2",
-    "eslint": "^4.17.0",
+    "eslint": "^4.19.1",
     "mocha": "^4.1.0",
-    "unexpected": "^10.37.0"
+    "unexpected": "^10.37.0",
+    "standard-version": "^4.3.0"
   }
 }
