@@ -1,8 +1,8 @@
 const admin = require('firebase-admin');
 const initialize = require('../lib/initialize');
-const serviceAccount = require('../serviceAccount.json');
+const serviceAccount = require('./serviceAccount.json');
 
-initialize(admin, serviceAccount);
+initialize(serviceAccount);
 const root = admin.database().ref();
 
 module.exports = (database) => {
