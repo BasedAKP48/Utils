@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.15.3"></a>
+## [1.15.3](https://github.com/BasedAKP48/Utils/compare/v1.15.2...v1.15.3) (2018-03-30)
+
+
+### Bug Fixes
+
+* **ensureRequired:** validate arguments ([d511ce8](https://github.com/BasedAKP48/Utils/commit/d511ce8))
+* timeReceived is deprecated ([26a6011](https://github.com/BasedAKP48/Utils/commit/26a6011))
+
+
+
 <a name="1.15.2"></a>
 ## [1.15.2](https://github.com/BasedAKP48/Utils/compare/v1.15.1...v1.15.2) (2018-03-26)
 
