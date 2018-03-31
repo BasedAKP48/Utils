@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.16.0"></a>
+# [1.16.0](https://github.com/BasedAKP48/Utils/compare/v1.15.3...v1.16.0) (2018-03-31)
+
+
+### Bug Fixes
+
+* **sendError:** don't send undefined to firebase ([c808fc3](https://github.com/BasedAKP48/Utils/commit/c808fc3))
+
+
+### Features
+
+* disable "config" listener ([d8d3c14](https://github.com/BasedAKP48/Utils/commit/d8d3c14))
+
+
+
 <a name="1.15.3"></a>
 ## [1.15.3](https://github.com/BasedAKP48/Utils/compare/v1.15.2...v1.15.3) (2018-03-30)
 
