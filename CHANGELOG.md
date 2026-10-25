@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/BasedAKP48/Utils/compare/v1.16.0...v2.0.0) (2026-10-25)
+
+
+* feat!: update to firebase-admin 13 and node 24, support application default credentials ([8bc3478](https://github.com/BasedAKP48/Utils/commit/8bc3478))
+
+
+### BREAKING CHANGES
+
+* requires node >= 24 and firebase-admin 13.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
+
 <a name="1.16.0"></a>
 # [1.16.0](https://github.com/BasedAKP48/Utils/compare/v1.15.3...v1.16.0) (2018-03-31)
 
