@@ -2,7 +2,7 @@
 // Project: BasedAKP48
 // Definitions by: Austin Peterson <austin@akpwebdesign.com> (https://blog.akpwebdesign.com/)
 
-import { Reference, ThenableReference } from '@firebase/database-types'
+import { Reference, ThenableReference } from 'firebase-admin/database'
 import admin from 'firebase-admin'
 import EventEmitter from 'events'
 
@@ -124,7 +124,7 @@ declare namespace Utils {
     name?: string
     /** Firebase Database root reference (optional). Will attempt to generate if missing. */
     root?: Reference
-    /** Firebase service account (optional). Will attempt to load from default location if missing. */
+    /** Firebase service account (optional). Will attempt to load serviceAccount.json next to the entry script, then fall back to Application Default Credentials. */
     serviceAccount?: admin.ServiceAccount
     /** CID (optional). Will create from database if missing. */
     cid?: string
@@ -225,10 +225,12 @@ declare namespace Utils {
   
   /**
    * Initializes a FirebaseAdmin application.
-   * @param {admin.ServiceAccount} serviceAccount Service account file from the Firebase web application
+   * Uses Application Default Credentials when no service account is given; the project then comes from GOOGLE_CLOUD_PROJECT.
+   * The database URL defaults to https://<project>.firebaseio.com and can be overridden with FIREBASE_DATABASE_URL.
+   * @param {admin.ServiceAccount} [serviceAccount] Service account file from the Firebase web application
    * @param {string} [appname] Optional name to initialize with.
    */
-  function initialize(serviceAccount: admin.ServiceAccount, appname: string)
+  function initialize(serviceAccount?: admin.ServiceAccount, appname?: string)
 
   /**
    * Returns a clean object (original or new) ready for storing in Firebase.
