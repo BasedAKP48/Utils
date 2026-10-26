@@ -1,5 +1,7 @@
 const expect = require('unexpected');
-const { Module, collectCommands, validateCommands } = require('../index');
+const {
+  Module, collectCommands, commandUsage, parseCommand, validateCommands,
+} = require('../index');
 const commands = require('../lib/commands');
 const createFakeRoot = require('./helpers/fakeRoot');
 
@@ -18,6 +20,136 @@ const good = {
 };
 
 describe('commands', () => {
+  describe('text arguments', () => {
+    const arg = (name, type, required) => ({
+      name, description: 'x', type, required,
+    });
+    const define = args => ({ x: { description: 'x', args } });
+
+    it('Should accept text arguments at the end', () => {
+      expect(validateCommands(define([arg('id', 'integer', true), arg('a', 'string'), arg('b', 'string')])), 'to equal', []);
+    });
+
+    it('Should refuse an argument after a text argument', () => {
+      expect(validateCommands(define([arg('a', 'string'), arg('n', 'integer')])), 'to equal', [
+        'command x: args[1]: text args must come last',
+      ]);
+    });
+  });
+
+  describe('parseCommand', () => {
+    const list = [
+      {
+        name: 'bid',
+        aliases: ['offer'],
+        args: [
+          { name: 'id', type: 'integer', required: true },
+          { name: 'amount', type: 'integer', required: true },
+          { name: 'hidden', type: 'boolean' },
+        ],
+      },
+      {
+        name: 'add',
+        args: [
+          { name: 'title', type: 'string', required: true },
+          { name: 'description', type: 'string' },
+        ],
+      },
+      {
+        name: 'edit',
+        args: [
+          { name: 'id', type: 'integer', required: true },
+          { name: 'title', type: 'string' },
+          { name: 'description', type: 'string' },
+        ],
+      },
+      { name: 'ping' },
+    ];
+    const read = (text, options) => {
+      const parsed = parseCommand(text, list, options);
+      return parsed && { name: parsed.command.name, args: parsed.args, problem: parsed.problem };
+    };
+
+    it('Should convert whole numbers and yes or no words', () => {
+      expect(read('.bid 12 500 hidden'), 'to equal', { name: 'bid', args: { id: 12, amount: 500, hidden: true }, problem: undefined });
+      expect(read('.bid 12 500 no').args, 'to equal', { id: 12, amount: 500, hidden: false });
+      expect(read('.bid 12 500').args, 'to equal', { id: 12, amount: 500 });
+    });
+
+    it('Should find a command by alias, in any case, with space after the prefix', () => {
+      expect(read('.OFFER 1 2').name, 'to be', 'bid');
+      expect(read('. bid 1 2').name, 'to be', 'bid');
+    });
+
+    it('Should need the prefix unless it is direct', () => {
+      expect(read('bid 1 2'), 'to be null');
+      expect(read('bid 1 2', { direct: true }).name, 'to be', 'bid');
+      expect(read('!bid 1 2', { prefix: '!' }).name, 'to be', 'bid');
+      expect(read('.bid 1 2', { prefix: '!' }), 'to be null');
+    });
+
+    it('Should ignore text that is not a command', () => {
+      ['.say hi', 'hello .bid', '.', '', '.bids', '.constructor', '.__proto__', null, undefined].forEach((text) => {
+        expect(read(text), 'to be null');
+      });
+    });
+
+    it('Should say what is wrong with an argument', () => {
+      expect(read('.bid abc 5').problem, 'to be', 'id must be a whole number');
+      expect(read('.bid 1 5.5').problem, 'to be', 'amount must be a whole number');
+      expect(read(`.bid 1 ${'9'.repeat(30)}`).problem, 'to be', 'amount must be a whole number');
+      expect(read('.bid 1 5 maybe').problem, 'to be', 'hidden must be yes or no');
+      expect(read('.bid 1').problem, 'to be', 'amount is required');
+      expect(read('.bid').problem, 'to be', 'id is required');
+      expect(read('.add   ').problem, 'to be', 'title is required');
+    });
+
+    it('Should accept a negative whole number and let the plugin judge it', () => {
+      expect(read('.bid 1 -50').args, 'to equal', { id: 1, amount: -50 });
+    });
+
+    it('Should give a lone text argument the rest of the line', () => {
+      expect(read('.add Dark mode | for night owls').args, 'to equal', { title: 'Dark mode', description: 'for night owls' });
+      expect(read('.add   Dark   mode ').args, 'to equal', { title: 'Dark   mode' });
+    });
+
+    it('Should keep an empty slot when a later text argument is given', () => {
+      expect(read('.edit 3 | only this').args, 'to equal', { id: 3, description: 'only this' });
+      expect(read('.edit 3 New title').args, 'to equal', { id: 3, title: 'New title' });
+      expect(read('.edit 3 New title | and this | and a bar').args, 'to equal', {
+        id: 3, title: 'New title', description: 'and this | and a bar',
+      });
+      expect(read('.edit 3').args, 'to equal', { id: 3 });
+    });
+
+    it('Should leave a command without arguments alone', () => {
+      expect(read('.ping now').args, 'to equal', {});
+    });
+  });
+
+  describe('commandUsage', () => {
+    it('Should show required arguments in angle brackets and the rest in square brackets', () => {
+      const command = {
+        name: 'bid',
+        args: [
+          { name: 'id', type: 'integer', required: true },
+          { name: 'hidden', type: 'boolean' },
+        ],
+      };
+      expect(commandUsage(command), 'to be', '.bid <id> [hidden]');
+      expect(commandUsage(command, '!'), 'to be', '!bid <id> [hidden]');
+      expect(commandUsage({ name: 'ping' }), 'to be', '.ping');
+    });
+
+    it('Should put a bar between text arguments', () => {
+      const command = {
+        name: 'add',
+        args: [{ name: 'title', type: 'string', required: true }, { name: 'description', type: 'string' }],
+      };
+      expect(commandUsage(command), 'to be', '.add <title> | [description]');
+    });
+  });
+
   describe('validate', () => {
     it('Should accept a complete definition', () => expect(validateCommands(good), 'to equal', []));
 
@@ -55,7 +187,7 @@ describe('commands', () => {
       });
       const problems = args => validateCommands({ a: { description: 'x', args } });
 
-      expect(problems([arg(), arg({ name: 'm', type: 'integer' }), arg({ name: 'o', type: 'boolean' })]), 'to equal', []);
+      expect(problems([arg({ name: 'm', type: 'integer' }), arg({ name: 'o', type: 'boolean' }), arg()]), 'to equal', []);
       expect(problems('nope'), 'to have length', 1);
       expect(problems([arg({ type: 'user' })]), 'to have length', 1);
       expect(problems([arg({ name: 'Bad' })]), 'to have length', 1);

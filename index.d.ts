@@ -336,6 +336,34 @@ declare namespace Utils {
   /** The servers a command is limited to on Discord, or an empty list if it is not limited. */
   function commandGuilds(settings: object | undefined): string[]
 
+  /** The result of reading a command from typed text. */
+  interface ParsedCommand {
+    /** The command that was named, found by name or alias. */
+    command: { name: string, aliases?: string[], args?: CommandArg[] }
+    /** The arguments by name, typed. Anything that was left out is missing. */
+    args?: { [name: string]: string | number | boolean }
+    /** Why the arguments could not be read, when they could not. */
+    problem?: string
+  }
+
+  /**
+   * Reads typed text as a command. Returns null when the text is not one of the commands.
+   * Whole numbers and yes/no words are converted. A text argument takes the rest of the line,
+   * and when several text arguments follow each other they are separated by a bar.
+   * Set direct to accept the command without the prefix, as in a direct message.
+   */
+  function parseCommand(
+    text: string,
+    commands: Iterable<{ name: string, aliases?: string[], args?: CommandArg[] }>,
+    options?: { prefix?: string, direct?: boolean },
+  ): ParsedCommand | null
+
+  /** The usage line of a command, such as ".feature-bid <id> <amount> [hidden]". */
+  function commandUsage(
+    command: { name: string, args?: CommandArg[] },
+    prefix?: string,
+  ): string
+
   /**
    * Checks command definitions keyed by name.
    * @returns {string[]} A description of every problem, empty if the definitions are valid.
