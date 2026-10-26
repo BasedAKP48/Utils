@@ -30,6 +30,10 @@ module.exports = function createFakeRoot(initial = {}) {
     on: (event, callback) => {
       listeners[path] = (listeners[path] || []).concat(callback);
     },
+    update: async (values) => {
+      Object.entries(values).forEach(([key, value]) => set(`${path}/${key}`, value));
+    },
+    onDisconnect: () => ({ update: () => {} }),
     transaction: async (update) => {
       const result = update(clone(get(path)));
       if (result !== undefined) set(path, result);
