@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.1"></a>
+## [2.3.1](https://github.com/BasedAKP48/Utils/compare/v2.3.0...v2.3.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* emit the direction of messages sent to a client queue ([f45a32d](https://github.com/BasedAKP48/Utils/commit/f45a32d))
+* hear a message targeted at a plugin once ([b58d9cb](https://github.com/BasedAKP48/Utils/commit/b58d9cb))
+
+
+
 <a name="2.3.0"></a>
 # [2.3.0](https://github.com/BasedAKP48/Utils/compare/v2.2.0...v2.3.0) (2026-10-26)
 
