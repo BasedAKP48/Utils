@@ -64,6 +64,13 @@ describe('commands', () => {
         ],
       },
       { name: 'ping' },
+      {
+        name: 'list',
+        args: [
+          { name: 'private', type: 'boolean' },
+          { name: 'status', type: 'string' },
+        ],
+      },
     ];
     const read = (text, options) => {
       const parsed = parseCommand(text, list, options);
@@ -120,6 +127,18 @@ describe('commands', () => {
         id: 3, title: 'New title', description: 'and this | and a bar',
       });
       expect(read('.edit 3').args, 'to equal', { id: 3 });
+    });
+
+    it('Should pass an optional yes or no word over when another argument can use it', () => {
+      expect(read('.list done').args, 'to equal', { status: 'done' });
+      expect(read('.list private done').args, 'to equal', { private: true, status: 'done' });
+      expect(read('.list no done').args, 'to equal', { private: false, status: 'done' });
+      expect(read('.list').args, 'to equal', {});
+      expect(read('.list private').args, 'to equal', { private: true });
+    });
+
+    it('Should still refuse a word that is not yes or no when nothing follows', () => {
+      expect(read('.bid 1 5 maybe').problem, 'to be', 'hidden must be yes or no');
     });
 
     it('Should leave a command without arguments alone', () => {
