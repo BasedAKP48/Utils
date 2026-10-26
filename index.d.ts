@@ -252,6 +252,63 @@ declare namespace Utils {
    */
   function isUnsafe(string: string, path?: boolean): boolean
 
+  interface CommandArg {
+    /** Lowercase letters, digits, "-" or "_", up to 32 characters. */
+    name: string
+    /** 1 to 100 characters. */
+    description: string
+    type: 'string' | 'integer' | 'boolean'
+    /** Required args must come before optional ones. Default: false */
+    required?: boolean
+  }
+
+  /**
+   * A command a plugin offers. Any other property must be an object holding settings
+   * for one kind of connector, such as "discord".
+   */
+  interface CommandDefinition {
+    /** 1 to 100 characters. */
+    description: string
+    /** Other names the command answers to in text. */
+    aliases?: string[]
+    /** At most 25, in the order they are written in text. */
+    args?: CommandArg[]
+    /** Replies are normally private, for connectors that can hide a reply. */
+    private?: boolean
+    /** Set to false in the database to switch the command off. */
+    enabled?: boolean
+    [connector: string]: unknown
+  }
+
+  interface CollectedCommand extends CommandDefinition {
+    name: string
+    cid: CID
+    /** Package name of the plugin that offers the command. */
+    plugin: string
+    instance: string
+    online: boolean
+  }
+
+  interface CollectedCommands {
+    /** Enabled, valid commands. Online plugins win a name clash. */
+    commands: CollectedCommand[]
+    conflicts: { name: string, cid: CID, winner: CID }[]
+    invalid: { cid: CID, name: string, problems: string[] }[]
+  }
+
+  /**
+   * Reads the commands of every plugin in the registry from its config.
+   * Only config/<cid>/commands is read for each plugin.
+   * @param {Reference} root Firebase Database root reference.
+   */
+  function collectCommands(root: Reference): Promise<CollectedCommands>
+
+  /**
+   * Checks command definitions keyed by name.
+   * @returns {string[]} A description of every problem, empty if the definitions are valid.
+   */
+  function validateCommands(commands: object): string[]
+
   /**
    * Moves data to new location, prioritizing existing data in new location if it exists.
    * @param {admin.Reference} root
@@ -268,6 +325,12 @@ declare namespace Utils {
     constructor(options: ModuleOptions)
     presenceSystem() : PresenceSystem
     messageSystem() : MessagingSystem
+    /**
+     * Offers commands, keyed by name. Once connected, any command missing from
+     * config/<cid>/commands is added. Commands that already exist are never changed,
+     * so edits made in the database are kept. Throws if a definition is invalid.
+     */
+    defaultCommands(definitions: { [name: string]: CommandDefinition }) : void
     /**
      * Send internal message with given data, returning a Promise that resolves with the internal message.
      */

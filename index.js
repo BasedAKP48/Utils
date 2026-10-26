@@ -3,6 +3,7 @@ const Plugin = require('./lib/plugin/Plugin');
 const MessagingSystem = require('./lib/messagingSystem');
 const Module = require('./lib/plugin/Module');
 const PresenceSystem = require('./lib/presenceSystem');
+const commands = require('./lib/commands');
 const ensureRequired = require('./lib/ensureRequired');
 const eventForwarder = require('./lib/eventForwarder');
 const getCID = require('./lib/getCID');
@@ -17,6 +18,7 @@ module.exports = {
   MessagingSystem,
   Module,
   PresenceSystem,
+  collectCommands: commands.collect,
   ensureRequired,
   eventForwarder,
   getCID,
@@ -26,4 +28,5 @@ module.exports = {
   isUnsafe: get.isUnsafe,
   safeObject: get.safeObject,
   safeString: get.safeString,
+  validateCommands: commands.validate,
 };
