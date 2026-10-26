@@ -4,6 +4,7 @@ const MessagingSystem = require('./lib/messagingSystem');
 const Module = require('./lib/plugin/Module');
 const PresenceSystem = require('./lib/presenceSystem');
 const commands = require('./lib/commands');
+const settings = require('./lib/commandSettings');
 const ensureRequired = require('./lib/ensureRequired');
 const eventForwarder = require('./lib/eventForwarder');
 const getCID = require('./lib/getCID');
@@ -18,7 +19,10 @@ module.exports = {
   MessagingSystem,
   Module,
   PresenceSystem,
+  allowedHere: settings.allowedHere,
   collectCommands: commands.collect,
+  commandGuilds: settings.guildsOf,
+  commandSettings: settings.commandSettings,
   ensureRequired,
   eventForwarder,
   getCID,

@@ -230,7 +230,9 @@ describe('commands', () => {
 
       await collectCommands(db.root);
 
-      expect(db.reads.sort(), 'to equal', ['config/p1/commands', 'registry']);
+      expect(db.reads.sort(), 'to equal', ['config/p1/commandDefaults', 'config/p1/commands', 'registry']);
+      expect(db.reads, 'not to contain', 'config/p1');
+      expect(db.reads, 'not to contain', 'config');
     });
 
     it('Should ignore registry entries without info and plugins without commands', async () => {

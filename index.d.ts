@@ -304,6 +304,39 @@ declare namespace Utils {
   function collectCommands(root: Reference): Promise<CollectedCommands>
 
   /**
+   * Settings every command of a plugin starts from, stored at config/<cid>/commandDefaults.
+   * A command's own value for the same setting wins, and lists replace instead of joining.
+   * Settings for one kind of connector sit under that connector's name, such as "discord".
+   * Use "*" in a list of servers for every server, since the database cannot store an empty list.
+   */
+  interface CommandDefaults {
+    enabled?: boolean
+    private?: boolean
+    [connector: string]: unknown
+  }
+
+  /**
+   * The settings of one command with the plugin defaults applied, from the config a module
+   * receives in its "config" event. Falls back to the definitions in code if the command
+   * has not been stored yet.
+   */
+  function commandSettings(
+    config: object | undefined,
+    name: string,
+    definitions?: { [name: string]: CommandDefinition },
+  ): Partial<CommandDefinition>
+
+  /**
+   * Whether a command may run for a message. Applies a disabled command, the servers a command is
+   * limited to, and direct messages, using the settings for the message's connector.
+   * Direct messages are allowed unless the command sets dmPermission to false.
+   */
+  function allowedHere(settings: object | undefined, message: object | undefined): boolean
+
+  /** The servers a command is limited to on Discord, or an empty list if it is not limited. */
+  function commandGuilds(settings: object | undefined): string[]
+
+  /**
    * Checks command definitions keyed by name.
    * @returns {string[]} A description of every problem, empty if the definitions are valid.
    */
