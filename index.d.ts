@@ -277,6 +277,8 @@ declare namespace Utils {
     private?: boolean
     /** Set to false in the database to switch the command off. */
     enabled?: boolean
+    /** Set to true in the database to stop new args from being added to this command. */
+    argLock?: boolean
     [connector: string]: unknown
   }
 
@@ -388,8 +390,10 @@ declare namespace Utils {
     messageSystem() : MessagingSystem
     /**
      * Offers commands, keyed by name. Once connected, any command missing from
-     * config/<cid>/commands is added. Commands that already exist are never changed,
-     * so edits made in the database are kept. Throws if a definition is invalid.
+     * config/<cid>/commands is added. Commands that already exist keep every edit made in the
+     * database, and only gain the args the stored command does not have yet, placed next to
+     * the args that the definition puts around them, unless the stored command sets argLock.
+     * Throws if a definition is invalid.
      */
     defaultCommands(definitions: { [name: string]: CommandDefinition }) : void
     /**

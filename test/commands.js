@@ -227,10 +227,15 @@ describe('commands', () => {
       expect(validateCommands({ c: { description: 'x', args: [optional, required] } }), 'to have length', 1);
     });
 
-    it('Should require booleans for private and enabled', () => {
+    it('Should require booleans for private, enabled and argLock', () => {
       expect(validateCommands({ a: { description: 'x', private: 'true' } }), 'to have length', 1);
       expect(validateCommands({ a: { description: 'x', enabled: 1 } }), 'to have length', 1);
-      expect(validateCommands({ a: { description: 'x', private: false, enabled: false } }), 'to equal', []);
+      expect(validateCommands({ a: { description: 'x', argLock: 'yes' } }), 'to have length', 1);
+      expect(validateCommands({
+        a: {
+          description: 'x', private: false, enabled: false, argLock: true,
+        },
+      }), 'to equal', []);
     });
 
     it('Should refuse unknown properties but allow per-connector objects', () => {
@@ -260,14 +265,107 @@ describe('commands', () => {
       expect(db.get('config/p1/commands/say'), 'to equal', { description: 'Say text' });
     });
 
-    it('Should never overwrite what is already stored', async () => {
+    it('Should never overwrite what is already stored, except to add missing arguments', async () => {
       const edited = { description: 'Edited by an admin', enabled: false };
       const db = createFakeRoot({ config: { p1: { commands: { balance: edited } } } });
 
       await commands.publish(ref(db), { ...good, say: { description: 'Say text' } });
 
-      expect(db.get('config/p1/commands/balance'), 'to equal', edited);
+      expect(db.get('config/p1/commands/balance'), 'to equal', { ...edited, args: good.balance.args });
       expect(db.get('config/p1/commands/say'), 'to equal', { description: 'Say text' });
+    });
+
+    describe('arguments', () => {
+      const arg = (name, extra = {}) => ({
+        name, description: `The ${name}`, type: 'string', ...extra,
+      });
+      const publishWith = async (stored, args) => {
+        const db = createFakeRoot({ config: { p1: { commands: { list: stored } } } });
+        await commands.publish(ref(db), { list: { description: 'List', args } });
+        return db.get('config/p1/commands/list');
+      };
+
+      it('Should put a new argument where the definition has it', async () => {
+        const stored = { description: 'List', args: [arg('status')] };
+
+        const result = await publishWith(stored, [arg('private', { type: 'boolean' }), arg('status')]);
+
+        expect(result.args.map(item => item.name), 'to equal', ['private', 'status']);
+      });
+
+      it('Should add an argument at the end of the list', async () => {
+        const result = await publishWith(
+          { description: 'List', args: [arg('title')] },
+          [arg('title'), arg('description')],
+        );
+
+        expect(result.args.map(item => item.name), 'to equal', ['title', 'description']);
+      });
+
+      it('Should add several, each at its place', async () => {
+        const result = await publishWith(
+          { description: 'List', args: [arg('b')] },
+          [arg('a'), arg('b'), arg('c')],
+        );
+
+        expect(result.args.map(item => item.name), 'to equal', ['a', 'b', 'c']);
+      });
+
+      it('Should keep what was edited in the arguments that are already there', async () => {
+        const translated = arg('status', { description: 'open of klaar', required: false });
+        const stored = { description: 'Lijst', args: [translated], enabled: false };
+
+        const result = await publishWith(stored, [arg('private'), arg('status')]);
+
+        expect(result, 'to equal', {
+          description: 'Lijst',
+          enabled: false,
+          args: [arg('private'), translated],
+        });
+      });
+
+      it('Should add all of them when none are stored', async () => {
+        const result = await publishWith({ description: 'List' }, [arg('a'), arg('b')]);
+
+        expect(result.args.map(item => item.name), 'to equal', ['a', 'b']);
+      });
+
+      it('Should leave arguments that are not in the definition alone', async () => {
+        const result = await publishWith(
+          { description: 'List', args: [arg('old'), arg('a')] },
+          [arg('a'), arg('b')],
+        );
+
+        expect(result.args.map(item => item.name), 'to equal', ['old', 'a', 'b']);
+      });
+
+      it('Should add nothing to a command that is locked', async () => {
+        const stored = { description: 'List', args: [arg('status')], argLock: true };
+
+        const result = await publishWith(stored, [arg('private'), arg('status'), arg('more')]);
+
+        expect(result, 'to equal', stored);
+      });
+
+      it('Should keep adding when the lock is off', async () => {
+        const result = await publishWith(
+          { description: 'List', args: [arg('a')], argLock: false },
+          [arg('a'), arg('b')],
+        );
+
+        expect(result.args.map(item => item.name), 'to equal', ['a', 'b']);
+      });
+
+      it('Should not touch a command that has everything, or a definition without arguments', async () => {
+        const stored = { description: 'Edited', args: [arg('b'), arg('a')] };
+        const same = await publishWith(stored, [arg('a'), arg('b')]);
+        const none = await publishWith({ description: 'List', args: [arg('x')] }, undefined);
+        const empty = await publishWith({ description: 'List' }, []);
+
+        expect(same, 'to equal', stored);
+        expect(none, 'to equal', { description: 'List', args: [arg('x')] });
+        expect(empty, 'to equal', { description: 'List' });
+      });
     });
 
     it('Should leave other config and other commands alone', async () => {
@@ -444,7 +542,9 @@ describe('commands', () => {
       db.emit('.info/connected', true);
       await settle();
 
-      expect(db.get('config/p1/commands/balance'), 'to equal', { description: 'Edited', enabled: false });
+      expect(db.get('config/p1/commands/balance'), 'to equal', {
+        description: 'Edited', enabled: false, args: good.balance.args,
+      });
     });
   });
 });
