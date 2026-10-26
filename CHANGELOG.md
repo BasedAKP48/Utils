@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/BasedAKP48/Utils/compare/v2.2.0...v2.3.0) (2026-10-26)
+
+
+### Features
+
+* read typed text as a command with named, typed arguments ([e61fb0c](https://github.com/BasedAKP48/Utils/commit/e61fb0c))
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/BasedAKP48/Utils/compare/v2.0.0...v2.1.0) (2026-10-26)
 
