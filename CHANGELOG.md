@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/BasedAKP48/Utils/compare/v2.0.0...v2.1.0) (2026-10-26)
+
+
+### Features
+
+* let plugins offer commands and connectors collect them ([7fda921](https://github.com/BasedAKP48/Utils/commit/7fda921))
+* publish where a plugin lives ([e645e38](https://github.com/BasedAKP48/Utils/commit/e645e38))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/BasedAKP48/Utils/compare/v1.16.0...v2.0.0) (2026-10-25)
 
