@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.5.0"></a>
+# [2.5.0](https://github.com/BasedAKP48/Utils/compare/v2.4.0...v2.5.0) (2026-10-26)
+
+
+### Features
+
+* add missing args to published commands, with an argLock to stop it ([9768724](https://github.com/BasedAKP48/Utils/commit/9768724))
+
+
+
 <a name="2.4.0"></a>
 # [2.4.0](https://github.com/BasedAKP48/Utils/compare/v2.3.1...v2.4.0) (2026-10-26)
 
