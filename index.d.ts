@@ -300,6 +300,20 @@ declare namespace Utils {
   interface CommandDefinition {
     /** 1 to 100 characters. */
     description: string
+    /**
+     * Puts the command in a group of related commands, which a connector can show as
+     * subcommands of one command: /voucher buy. In text it can be typed as ".voucher buy" or
+     * with its whole name. Lowercase letters, digits, "-" or "_", up to 32 characters. A group
+     * has at most 25 commands, and its name cannot be the name of a command.
+     */
+    group?: string
+    /**
+     * The name of the command inside its group. Default: the name of the command without the
+     * name of the group and a dash, so "voucher-buy" in the group "voucher" is "buy".
+     */
+    subcommand?: string
+    /** What the group is for, 1 to 100 characters. The first one found for a group is used. */
+    groupDescription?: string
     /** Other names the command answers to in text. */
     aliases?: string[]
     /** At most 25, in the order they are written in text. */
@@ -402,6 +416,23 @@ declare namespace Utils {
    * @returns {string[]} A description of every problem, empty if the definitions are valid.
    */
   function validateCommands(commands: object): string[]
+
+  /** The name of a command inside its group, or undefined for a command without a group. */
+  function subcommandName(command: { name: string, group?: string, subcommand?: string }): string | undefined
+
+  /**
+   * Sorts collected commands into those without a group and groups of subcommands, ready for a
+   * connector to register. Commands that cannot be shown are reported: a subcommand name that is
+   * already taken in its group (the first one wins), a group named like a command, and more than
+   * 25 subcommands in a group. A group without a description gets its name.
+   */
+  function groupCommands<T extends { name: string, group?: string, subcommand?: string, groupDescription?: string }>(
+    commands: Iterable<T>,
+  ): {
+    standalone: T[]
+    groups: { name: string, description: string, subcommands: { name: string, command: T }[] }[]
+    conflicts: { name: string, group: string, reason: string }[]
+  }
 
   /**
    * The choices that match what someone has typed, at most limit (default 25): names or values

@@ -11,6 +11,7 @@ const ensureRequired = require('./lib/ensureRequired');
 const eventForwarder = require('./lib/eventForwarder');
 const getCID = require('./lib/getCID');
 const getReply = require('./lib/getReply');
+const groups = require('./lib/groups');
 const initialize = require('./lib/initialize');
 const move = require('./lib/move');
 const get = require('./lib/safeFirebaseObject');
@@ -32,6 +33,7 @@ module.exports = {
   filterChoices: args.filterChoices,
   getCID,
   getReply,
+  groupCommands: groups.groupCommands,
   initialize,
   move,
   commandUsage: commands.usage,
@@ -40,6 +42,7 @@ module.exports = {
   parseComponentCustomId: components.parseCustomId,
   safeObject: get.safeObject,
   safeString: get.safeString,
+  subcommandName: groups.subcommandName,
   validateCommands: commands.validate,
   validateComponents: components.validate,
 };
