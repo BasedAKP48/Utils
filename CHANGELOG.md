@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.6.0"></a>
+# [2.6.0](https://github.com/BasedAKP48/Utils/compare/v2.5.0...v2.6.0) (2026-11-07)
+
+
+### Features
+
+* support discord command choices ([ef3893b](https://github.com/BasedAKP48/Utils/commit/ef3893b))
+
+
+
 <a name="2.5.0"></a>
 # [2.5.0](https://github.com/BasedAKP48/Utils/compare/v2.4.0...v2.5.0) (2026-10-26)
 
