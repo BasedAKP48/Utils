@@ -314,6 +314,20 @@ declare namespace Utils {
     subcommand?: string
     /** What the group is for, 1 to 100 characters. The first one found for a group is used. */
     groupDescription?: string
+    /**
+     * Also offers the command in the right-click menu of a user or a message, for connectors
+     * that have one. The command runs as it does when typed, with the arg named by arg filled
+     * from what was clicked: a user fills a user arg with the id, a message fills a string arg
+     * with its text. Every other arg must be optional, since a menu cannot ask for it. A
+     * connector can show at most 5 menu commands of each type.
+     */
+    context?: {
+      type: 'user' | 'message'
+      /** The arg the clicked user or message fills. */
+      arg: string
+      /** 1 to 32 characters, capitals and spaces allowed. Default: the name of the command in words. */
+      name?: string
+    }
     /** Other names the command answers to in text. */
     aliases?: string[]
     /** At most 25, in the order they are written in text. */
@@ -416,6 +430,23 @@ declare namespace Utils {
    * @returns {string[]} A description of every problem, empty if the definitions are valid.
    */
   function validateCommands(commands: object): string[]
+
+  /** The name a command has in a right-click menu: the one it gives, or its own name in words. */
+  function menuName(command: { name: string, context?: { name?: string } }): string
+
+  /**
+   * Sorts collected commands that have a context into the menus of users and of messages, each
+   * with the name to show and the arg the click fills. Commands that cannot be shown are
+   * reported: a menu name that is taken for that type, whatever the case (the first one wins),
+   * and more than 5 menus of a type.
+   */
+  function contextMenus<T extends { name: string, context?: { type: 'user' | 'message', arg: string, name?: string } }>(
+    commands: Iterable<T>,
+  ): {
+    user: { name: string, command: T, arg: string }[]
+    message: { name: string, command: T, arg: string }[]
+    conflicts: { name: string, type: 'user' | 'message', reason: string }[]
+  }
 
   /** The name of a command inside its group, or undefined for a command without a group. */
   function subcommandName(command: { name: string, group?: string, subcommand?: string }): string | undefined

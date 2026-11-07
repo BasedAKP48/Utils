@@ -13,6 +13,7 @@ const getCID = require('./lib/getCID');
 const getReply = require('./lib/getReply');
 const groups = require('./lib/groups');
 const initialize = require('./lib/initialize');
+const menus = require('./lib/menus');
 const move = require('./lib/move');
 const get = require('./lib/safeFirebaseObject');
 
@@ -26,6 +27,7 @@ module.exports = {
   collectCommands: commands.collect,
   commandGuilds: settings.guildsOf,
   commandSettings: settings.commandSettings,
+  contextMenus: menus.contextMenus,
   buildComponents: components.build,
   componentCustomId: components.customId,
   ensureRequired,
@@ -38,6 +40,7 @@ module.exports = {
   move,
   commandUsage: commands.usage,
   isUnsafe: get.isUnsafe,
+  menuName: menus.menuName,
   parseCommand: commands.parseText,
   parseComponentCustomId: components.parseCustomId,
   safeObject: get.safeObject,
