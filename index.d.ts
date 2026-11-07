@@ -260,6 +260,19 @@ declare namespace Utils {
     type: 'string' | 'integer' | 'boolean'
     /** Required args must come before optional ones. Default: false */
     required?: boolean
+    /**
+     * At most 25 values to pick from, for connectors that can show a picker. Only string and
+     * integer args can have them: a string choice has text for a value, an integer choice a
+     * whole number. The plugin should still check the value it gets.
+     */
+    choices?: CommandChoice[]
+  }
+
+  interface CommandChoice {
+    /** 1 to 100 characters, shown to the person choosing. */
+    name: string
+    /** Text of 1 to 100 characters for a string arg, a whole number for an integer arg. */
+    value: string | number
   }
 
   /**
@@ -393,7 +406,10 @@ declare namespace Utils {
      * config/<cid>/commands is added. Commands that already exist keep every edit made in the
      * database, and only gain the args the stored command does not have yet, placed next to
      * the args that the definition puts around them, unless the stored command sets argLock.
-     * Throws if a definition is invalid.
+     * An arg whose definition has a choices property always gets those choices (none, if the
+     * list is empty), also unless argLock is set, since the plugin owns them.
+     * Call it again with new definitions, for example when the config changes, to publish
+     * them right away if connected. Throws if a definition is invalid.
      */
     defaultCommands(definitions: { [name: string]: CommandDefinition }) : void
     /**

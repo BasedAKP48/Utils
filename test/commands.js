@@ -217,6 +217,56 @@ describe('commands', () => {
       expect(problems(Array.from({ length: 26 }, (_, i) => arg({ name: `n${i}` }))), 'to have length', 1);
     });
 
+    describe('choices', () => {
+      const arg = (overrides = {}) => ({
+        name: 'plan', description: 'Which plan', type: 'string', ...overrides,
+      });
+      const problems = args => validateCommands({ a: { description: 'x', args } });
+      const choice = (name, value = name) => ({ name, value });
+
+      it('Should accept up to 25 text choices, or whole numbers for an integer', () => {
+        const many = Array.from({ length: 25 }, (_, i) => choice(`Plan ${i}`, `plan-${i}`));
+
+        expect(problems([arg({ choices: [choice('Monthly', 'monthly'), choice('Yearly', 'yearly')] })]), 'to equal', []);
+        expect(problems([arg({ choices: many })]), 'to equal', []);
+        expect(problems([arg({ type: 'integer', choices: [choice('One', 1), choice('Two', 2)] })]), 'to equal', []);
+        expect(problems([arg({ choices: [] })]), 'to equal', []);
+      });
+
+      it('Should refuse more than 25 choices', () => {
+        const many = Array.from({ length: 26 }, (_, i) => choice(`Plan ${i}`, `plan-${i}`));
+
+        expect(problems([arg({ choices: many })]), 'to equal', ['command a: args[0]: at most 25 choices']);
+      });
+
+      it('Should refuse choices on a boolean, or that are not a list', () => {
+        expect(problems([arg({ type: 'boolean', choices: [choice('Yes', 'yes')] })]), 'to equal', [
+          'command a: args[0]: only string and integer args can have choices',
+        ]);
+        expect(problems([arg({ choices: 'monthly' })]), 'to equal', ['command a: args[0]: choices must be an array']);
+      });
+
+      it('Should check each choice', () => {
+        expect(problems([arg({ choices: ['monthly'] })]), 'to equal', ['command a: args[0]: choices[0] must be an object']);
+        expect(problems([arg({ choices: [choice('', 'x')] })]), 'to have length', 1);
+        expect(problems([arg({ choices: [choice('x'.repeat(101), 'x')] })]), 'to have length', 1);
+        expect(problems([arg({ choices: [choice('Monthly', '')] })]), 'to have length', 1);
+        expect(problems([arg({ choices: [choice('Monthly', 'x'.repeat(101))] })]), 'to have length', 1);
+        expect(problems([arg({ choices: [choice('Monthly', 5)] })]), 'to have length', 1);
+        expect(problems([arg({ type: 'integer', choices: [choice('One', '1')] })]), 'to have length', 1);
+        expect(problems([arg({ type: 'integer', choices: [choice('Half', 0.5)] })]), 'to have length', 1);
+        expect(problems([arg({ choices: [{ name: 'a', value: 'a', extra: true }] })]), 'to equal', [
+          'command a: args[0]: choices[0]: unknown property extra',
+        ]);
+      });
+
+      it('Should refuse the same value twice', () => {
+        expect(problems([arg({ choices: [choice('Monthly', 'm'), choice('Also monthly', 'm')] })]), 'to equal', [
+          'command a: args[0]: choices[1]: duplicate value m',
+        ]);
+      });
+    });
+
     it('Should put required args before optional ones', () => {
       const optional = { name: 'a', description: 'd', type: 'string' };
       const required = {
@@ -354,6 +404,81 @@ describe('commands', () => {
         );
 
         expect(result.args.map(item => item.name), 'to equal', ['a', 'b']);
+      });
+
+      describe('choices', () => {
+        const pick = (...values) => values.map(value => ({ name: value.toUpperCase(), value }));
+
+        it('Should set the choices of an argument that is already stored', async () => {
+          const result = await publishWith(
+            { description: 'List', args: [arg('plan')] },
+            [arg('plan', { choices: pick('monthly', 'yearly') })],
+          );
+
+          expect(result.args[0].choices, 'to equal', pick('monthly', 'yearly'));
+        });
+
+        it('Should replace the stored choices when the plugin has new ones', async () => {
+          const result = await publishWith(
+            { description: 'List', args: [arg('plan', { choices: pick('monthly') })] },
+            [arg('plan', { choices: pick('monthly', 'badge') })],
+          );
+
+          expect(result.args[0].choices, 'to equal', pick('monthly', 'badge'));
+        });
+
+        it('Should remove the stored choices when the plugin has none left', async () => {
+          const result = await publishWith(
+            { description: 'List', args: [arg('plan', { choices: pick('monthly') })] },
+            [arg('plan', { choices: [] })],
+          );
+
+          expect('choices' in result.args[0], 'to be', false);
+        });
+
+        it('Should leave choices alone when the definition does not mention them', async () => {
+          const stored = { description: 'List', args: [arg('plan', { choices: pick('monthly') })] };
+
+          expect(await publishWith(stored, [arg('plan')]), 'to equal', stored);
+        });
+
+        it('Should keep the other edits of that argument', async () => {
+          const result = await publishWith(
+            { description: 'List', args: [arg('plan', { description: 'Welke', required: true })] },
+            [arg('plan', { choices: pick('monthly') })],
+          );
+
+          expect(result.args[0], 'to equal', arg('plan', {
+            description: 'Welke', required: true, choices: pick('monthly'),
+          }));
+        });
+
+        it('Should not change choices on a command that is locked', async () => {
+          const stored = { description: 'List', args: [arg('plan', { choices: pick('monthly') })], argLock: true };
+
+          expect(await publishWith(stored, [arg('plan', { choices: pick('badge') })]), 'to equal', stored);
+        });
+
+        it('Should store the choices of an argument it adds', async () => {
+          const result = await publishWith(
+            { description: 'List', args: [arg('other')] },
+            [arg('other'), arg('plan', { choices: pick('monthly') })],
+          );
+
+          expect(result.args[1].choices, 'to equal', pick('monthly'));
+        });
+
+        it('Should write nothing when the choices already match', async () => {
+          const db = createFakeRoot({
+            config: { p1: { commands: { list: { description: 'List', args: [arg('plan', { choices: pick('monthly') })] } } } },
+          });
+          const definition = { list: { description: 'List', args: [arg('plan', { choices: pick('monthly') })] } };
+          const before = JSON.stringify(db.data);
+
+          await commands.publish(ref(db), definition);
+
+          expect(JSON.stringify(db.data), 'to be', before);
+        });
       });
 
       it('Should not touch a command that has everything, or a definition without arguments', async () => {
@@ -528,6 +653,82 @@ describe('commands', () => {
       db.emit('.info/connected', true);
       await settle();
       expect(db.get('config/p1/commands/balance'), 'to equal', good.balance);
+    });
+
+    describe('when called again', () => {
+      const listing = choices => ({
+        list: {
+          description: 'List',
+          args: [{
+            name: 'plan', description: 'Which plan', type: 'string', choices,
+          }],
+        },
+      });
+      const choiceOf = (db) => {
+        const stored = db.get('config/p1/commands/list');
+        return stored && stored.args[0].choices;
+      };
+
+      it('Should publish the new definitions right away when connected', async () => {
+        const db = createFakeRoot();
+        const m = create(db);
+        m.defaultCommands(listing([]));
+        db.emit('.info/connected', true);
+        await settle();
+
+        m.defaultCommands(listing([{ name: 'Monthly', value: 'monthly' }]));
+        await settle();
+
+        expect(choiceOf(db), 'to equal', [{ name: 'Monthly', value: 'monthly' }]);
+      });
+
+      it('Should publish only the latest definitions once it connects', async () => {
+        const db = createFakeRoot();
+        const m = create(db);
+        m.defaultCommands(listing([{ name: 'Old', value: 'old' }]));
+        m.defaultCommands(listing([{ name: 'Monthly', value: 'monthly' }]));
+        await settle();
+        expect(db.get('config/p1/commands'), 'to be null');
+
+        db.emit('.info/connected', true);
+        await settle();
+
+        expect(choiceOf(db), 'to equal', [{ name: 'Monthly', value: 'monthly' }]);
+      });
+
+      it('Should not watch the connection twice', async () => {
+        const db = createFakeRoot();
+        const m = create(db);
+        const calls = [];
+        const publish = commands.publish;
+        commands.publish = (...args) => {
+          calls.push(args);
+          return publish(...args);
+        };
+
+        try {
+          m.defaultCommands(listing([]));
+          m.defaultCommands(listing([]));
+          db.emit('.info/connected', true);
+          await settle();
+        } finally {
+          commands.publish = publish;
+        }
+
+        expect(calls, 'to have length', 1);
+      });
+
+      it('Should refuse invalid definitions and keep the earlier ones', async () => {
+        const db = createFakeRoot();
+        const m = create(db);
+        m.defaultCommands(listing([{ name: 'Monthly', value: 'monthly' }]));
+
+        expect(() => m.defaultCommands({ Bad: {} }), 'to throw', /Invalid commands/);
+        db.emit('.info/connected', true);
+        await settle();
+
+        expect(choiceOf(db), 'to equal', [{ name: 'Monthly', value: 'monthly' }]);
+      });
     });
 
     it('Should not overwrite edits when it reconnects', async () => {
