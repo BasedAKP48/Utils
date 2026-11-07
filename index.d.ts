@@ -257,21 +257,39 @@ declare namespace Utils {
     name: string
     /** 1 to 100 characters. */
     description: string
-    type: 'string' | 'integer' | 'boolean'
+    /**
+     * A user, channel, role or mentionable is read as an id, from a mention or an id when typed.
+     * A number may have decimals. An attachment can only be given with the slash command, so
+     * typed text cannot fill a required one.
+     */
+    type: 'string' | 'integer' | 'number' | 'boolean' | 'user' | 'channel' | 'role' | 'mentionable' | 'attachment'
     /** Required args must come before optional ones. Default: false */
     required?: boolean
     /**
-     * At most 25 values to pick from, for connectors that can show a picker. Only string and
-     * integer args can have them: a string choice has text for a value, an integer choice a
-     * whole number. The plugin should still check the value it gets.
+     * At most 25 values to pick from, for connectors that can show a picker, or at most 500 with
+     * autocomplete. Only string, integer and number args can have them: a string choice has text
+     * for a value, an integer choice a whole number, a number choice any number. Typed text
+     * must be a value or a name. The plugin should still check the value it gets. Cannot be
+     * combined with the limits below.
      */
     choices?: CommandChoice[]
+    /**
+     * Search the choices as someone types, so a list can be longer than 25. Needs choices. When
+     * typed, part of a name is enough if only one choice has it.
+     */
+    autocomplete?: boolean
+    /** For integer and number args. Typed text outside the limits is refused. */
+    minValue?: number
+    maxValue?: number
+    /** For string args, from 0 to 6000 and from 1 to 6000. Typed text outside them is refused. */
+    minLength?: number
+    maxLength?: number
   }
 
   interface CommandChoice {
     /** 1 to 100 characters, shown to the person choosing. */
     name: string
-    /** Text of 1 to 100 characters for a string arg, a whole number for an integer arg. */
+    /** Text of 1 to 100 characters for a string arg, a whole number for an integer arg, any number for a number arg. */
     value: string | number
   }
 
@@ -385,6 +403,13 @@ declare namespace Utils {
    */
   function validateCommands(commands: object): string[]
 
+  /**
+   * The choices that match what someone has typed, at most limit (default 25): names or values
+   * that start with it first, then those that contain it, in the order of the list. Case does
+   * not matter. Nothing typed gives the first choices.
+   */
+  function filterChoices(choices: CommandChoice[], query?: string, limit?: number): CommandChoice[]
+
   interface ActionButton {
     /** 1 to 50 letters, digits, "_", ".", ":" or "-". Used once in a message. */
     id: string
@@ -458,6 +483,17 @@ declare namespace Utils {
      * them right away if connected. Throws if a definition is invalid.
      */
     defaultCommands(definitions: { [name: string]: CommandDefinition }) : void
+    /**
+     * Calls the handler when someone clicks a button this plugin put on a message, and for no
+     * other plugin's buttons. Buttons are sent in a reply as data.discord_components, see
+     * buildComponents. The message is described like a command: uid is who clicked, text and
+     * data.componentId are the id of the button, data.messageId is the message it was on, and
+     * data.invokerId is who ran the command that made the message, or null. Answer it as you
+     * answer a command, with the same interactionId: a reply edits the message the button is on,
+     * and takes its buttons off unless it brings new ones, and a private reply is sent on its
+     * own and leaves the message as it is.
+     */
+    onComponent(handler: (msg: IncomingMessage, ref: any) => void) : void
     /**
      * Send internal message with given data, returning a Promise that resolves with the internal message.
      */

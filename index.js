@@ -3,6 +3,7 @@ const Plugin = require('./lib/plugin/Plugin');
 const MessagingSystem = require('./lib/messagingSystem');
 const Module = require('./lib/plugin/Module');
 const PresenceSystem = require('./lib/presenceSystem');
+const args = require('./lib/args');
 const commands = require('./lib/commands');
 const components = require('./lib/components');
 const settings = require('./lib/commandSettings');
@@ -28,6 +29,7 @@ module.exports = {
   componentCustomId: components.customId,
   ensureRequired,
   eventForwarder,
+  filterChoices: args.filterChoices,
   getCID,
   getReply,
   initialize,

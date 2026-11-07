@@ -208,7 +208,7 @@ describe('commands', () => {
 
       expect(problems([arg({ name: 'm', type: 'integer' }), arg({ name: 'o', type: 'boolean' }), arg()]), 'to equal', []);
       expect(problems('nope'), 'to have length', 1);
-      expect(problems([arg({ type: 'user' })]), 'to have length', 1);
+      expect(problems([arg({ type: 'embed' })]), 'to have length', 1);
       expect(problems([arg({ name: 'Bad' })]), 'to have length', 1);
       expect(problems([arg({ description: '' })]), 'to have length', 1);
       expect(problems([arg(), arg()]), 'to have length', 1);
@@ -241,7 +241,7 @@ describe('commands', () => {
 
       it('Should refuse choices on a boolean, or that are not a list', () => {
         expect(problems([arg({ type: 'boolean', choices: [choice('Yes', 'yes')] })]), 'to equal', [
-          'command a: args[0]: only string and integer args can have choices',
+          'command a: args[0]: only string, integer and number args can have choices',
         ]);
         expect(problems([arg({ choices: 'monthly' })]), 'to equal', ['command a: args[0]: choices must be an array']);
       });

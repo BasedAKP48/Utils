@@ -1,7 +1,9 @@
+const { EventEmitter } = require('events');
 const expect = require('unexpected');
 const {
-  buildComponents, componentCustomId, parseComponentCustomId, validateComponents,
+  Module, buildComponents, componentCustomId, parseComponentCustomId, validateComponents,
 } = require('../index');
+const createFakeRoot = require('./helpers/fakeRoot');
 
 const action = (overrides = {}) => ({ id: 'confirm', label: 'Confirm', ...overrides });
 const link = (overrides = {}) => ({ url: 'https://example.test/redeem', label: 'Redeem', ...overrides });
@@ -151,5 +153,51 @@ describe('component custom ids', () => {
     expect(parseComponentCustomId('btn::x'), 'to be null');
     expect(parseComponentCustomId(undefined), 'to be null');
     expect(parseComponentCustomId(5), 'to be null');
+  });
+});
+
+describe('Module#onComponent', () => {
+  const create = (cid) => {
+    const m = new Module({
+      type: 'plugin', root: createFakeRoot().root, cid, pkg: {}, useBasicConfig: false,
+    });
+    const messages = new EventEmitter();
+    m.messageSystem = () => messages;
+    return { m, messages };
+  };
+  const click = (pluginCid, id = 'confirm') => ({ text: id, uid: 'u1', data: { pluginCid, componentId: id } });
+
+  it('Should call the handler for a click on its own buttons, with the message and its reference', () => {
+    const { m, messages } = create('p1');
+    const calls = [];
+    m.onComponent((msg, ref) => calls.push([msg, ref]));
+
+    messages.emit('message/component', click('p1'), 'ref');
+
+    expect(calls, 'to equal', [[click('p1'), 'ref']]);
+  });
+
+  it('Should ignore the buttons of other plugins, and messages that say nothing about a plugin', () => {
+    const { m, messages } = create('p1');
+    const calls = [];
+    m.onComponent(msg => calls.push(msg));
+
+    messages.emit('message/component', click('p2'));
+    messages.emit('message/component', { text: 'x', uid: 'u1' });
+    messages.emit('message/component', { text: 'x', uid: 'u1', data: {} });
+    messages.emit('message/command', click('p1'));
+
+    expect(calls, 'to equal', []);
+  });
+
+  it('Should keep calling the handler for every click', () => {
+    const { m, messages } = create('p1');
+    const ids = [];
+    m.onComponent(msg => ids.push(msg.data.componentId));
+
+    messages.emit('message/component', click('p1', 'a'));
+    messages.emit('message/component', click('p1', 'b'));
+
+    expect(ids, 'to equal', ['a', 'b']);
   });
 });
