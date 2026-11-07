@@ -385,6 +385,52 @@ declare namespace Utils {
    */
   function validateCommands(commands: object): string[]
 
+  interface ActionButton {
+    /** 1 to 50 letters, digits, "_", ".", ":" or "-". Used once in a message. */
+    id: string
+    /** 1 to 80 characters. */
+    label: string
+    /** Default: "secondary". */
+    style?: 'primary' | 'secondary' | 'success' | 'danger'
+    disabled?: boolean
+  }
+
+  interface LinkButton {
+    /** An http or https address of at most 512 characters. */
+    url: string
+    /** 1 to 80 characters. */
+    label: string
+    disabled?: boolean
+  }
+
+  type Button = ActionButton | LinkButton
+
+  /** At most 5 buttons. */
+  type ButtonRow = Button[]
+
+  /**
+   * Checks buttons: a list of buttons for one row, or a list of up to 5 rows. An empty list is
+   * valid, and takes the buttons off a message.
+   * @returns {string[]} A description of every problem, empty if the buttons are valid.
+   */
+  function validateComponents(components: Button[] | ButtonRow[]): string[]
+
+  /**
+   * Checks buttons and returns them as rows, as a copy. A flat list of buttons is one row.
+   * Throws, listing every problem, if they are not valid.
+   */
+  function buildComponents(components: Button[] | ButtonRow[]): ButtonRow[]
+
+  /**
+   * The custom id Discord is given for a button of a plugin, so that a click can be sent back to
+   * the plugin that made it. Throws if the plugin id has a ":" or the result is over 100
+   * characters, which Discord does not accept.
+   */
+  function componentCustomId(cid: string, id: string): string
+
+  /** Reads a custom id made by componentCustomId. Returns null for any other custom id. */
+  function parseComponentCustomId(customId: string): { cid: string, id: string } | null
+
   /**
    * Moves data to new location, prioritizing existing data in new location if it exists.
    * @param {admin.Reference} root

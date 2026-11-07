@@ -4,6 +4,7 @@ const MessagingSystem = require('./lib/messagingSystem');
 const Module = require('./lib/plugin/Module');
 const PresenceSystem = require('./lib/presenceSystem');
 const commands = require('./lib/commands');
+const components = require('./lib/components');
 const settings = require('./lib/commandSettings');
 const ensureRequired = require('./lib/ensureRequired');
 const eventForwarder = require('./lib/eventForwarder');
@@ -23,6 +24,8 @@ module.exports = {
   collectCommands: commands.collect,
   commandGuilds: settings.guildsOf,
   commandSettings: settings.commandSettings,
+  buildComponents: components.build,
+  componentCustomId: components.customId,
   ensureRequired,
   eventForwarder,
   getCID,
@@ -32,7 +35,9 @@ module.exports = {
   commandUsage: commands.usage,
   isUnsafe: get.isUnsafe,
   parseCommand: commands.parseText,
+  parseComponentCustomId: components.parseCustomId,
   safeObject: get.safeObject,
   safeString: get.safeString,
   validateCommands: commands.validate,
+  validateComponents: components.validate,
 };
