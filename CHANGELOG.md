@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.7.0"></a>
+# [2.7.0](https://github.com/BasedAKP48/Utils/compare/v2.6.0...v2.7.0) (2026-11-07)
+
+
+### Features
+
+* more argument types, limits and searchable choice lists, and a handler for clicks on a plugin's own buttons ([cfa22d5](https://github.com/BasedAKP48/Utils/commit/cfa22d5))
+* offer a command in the right-click menu of a user or a message ([2a5efd5](https://github.com/BasedAKP48/Utils/commit/2a5efd5))
+* put commands in groups, to be shown as subcommands ([97b05b7](https://github.com/BasedAKP48/Utils/commit/97b05b7))
+* validate buttons, and make and read the custom ids that route a click to its plugin ([60d0d41](https://github.com/BasedAKP48/Utils/commit/60d0d41))
+
+
+
 <a name="2.6.0"></a>
 # [2.6.0](https://github.com/BasedAKP48/Utils/compare/v2.5.0...v2.6.0) (2026-11-07)
 
